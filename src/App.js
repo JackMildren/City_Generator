@@ -2,36 +2,44 @@ import "./App.css";
 import { useState, useEffect } from "react";
 
 import nameList from "./data/humanNames.json";
+import occupationList from "./data/occupations.json";
 
 function App() {
   const genderList = ["Male", "Female", "Other"];
-  const [name, setName] = useState(["test_fName", "test_lName"]);
+  const [fName, setFName] = useState("test_fName");
+  const [lName, setLName] = useState("test_lName");
   const [gender, setGender] = useState("test_gender");
+  const [occupation, setOccupation] = useState("test_occupation");
 
   useEffect(() => {
     generate();
   }, []);
 
   const generate = () => {
-    const newGender = genderList[getRandomNumber(genderList.length - 1)];
-    setGender(newGender);
+    const newGender = generateAttribute(setGender, genderList);
 
-    const newName = [...name];
-    let fName;
+    let fNameList;
     switch (newGender) {
       case "Male":
-        fName = [...nameList.maleFName];
+        fNameList = [...nameList.maleFName];
         break;
       case "Female":
-        fName = [...nameList.femaleFName];
+        fNameList = [...nameList.femaleFName];
         break;
       default:
-        fName = [...nameList.neutralFName];
+        fNameList = [...nameList.neutralFName];
         break;
     }
-    newName[0] = fName[getRandomNumber(fName.length - 1)];
-    newName[1] = nameList.lName[getRandomNumber(nameList.lName.length - 1)];
-    setName(newName);
+    generateAttribute(setFName, fNameList);
+    generateAttribute(setLName, nameList.lName);
+    generateAttribute(setOccupation, occupationList);
+  };
+
+  const generateAttribute = (attributeSetter, attributeList) => {
+    const newAttribute =
+      attributeList[getRandomNumber(attributeList.length - 1)];
+    attributeSetter(newAttribute);
+    return newAttribute;
   };
 
   const getRandomNumber = (max, min = 0) => {
@@ -45,9 +53,10 @@ function App() {
       <p id="titles">Your New NPC IS...</p>
       <ul>
         <li>
-          Name: {name[0]} {name[1]}
+          Name: {fName} {lName}
         </li>
         <li>Gender: {gender}</li>
+        <li>Occupation: {occupation}</li>
       </ul>
       <button onClick={() => generate()}>REGEN</button>
     </div>
